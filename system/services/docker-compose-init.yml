@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: nginx
+    env_file: ${ROOT_PATH}/.env
+    ports:
+      - "80:80"
+    volumes:
+      - "${ROOT_PATH}/system/services/nginx/templates-init:/etc/nginx/templates"
+      - "${ROOT_PATH}/system/services/nginx/certbot/letsencrypt:/etc/letsencrypt"
+      - "${ROOT_PATH}/system/services/nginx/certbot/html:/var/www/certbot"
+    restart: unless-stopped

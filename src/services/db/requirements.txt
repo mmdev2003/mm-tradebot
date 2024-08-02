@@ -1,0 +1,5 @@
+filelock
+python-dotenv
+pandas
+pybit
+Flask

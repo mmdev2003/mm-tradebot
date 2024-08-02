@@ -1,0 +1,8 @@
+filelock
+python-dotenv
+fastapi
+uvicorn
+loguru
+pandas
+requests
+pybit

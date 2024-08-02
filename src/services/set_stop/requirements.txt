@@ -1,0 +1,17 @@
+aiogram
+aiohttp
+filelock
+python-dotenv
+pandas
+numpy
+Flask
+tqdm
+torch
+pandas-ta
+pdfkit
+scikit-learn
+pdf2image
+imgkit
+pycrypto
+
+pybit
