@@ -1,6 +1,0 @@
-filelock
-python-dotenv
-pandas
-numpy
-pycrypto
-pybit
