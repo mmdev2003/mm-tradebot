@@ -32,8 +32,8 @@ class Position:
     leverage: Decimal
 
     # RM
-    time_to_set_stop: Decimal
-    time_to_cancel_order: Decimal
+    wait_time_to_set_stop: int
+    wait_time_to_cancel_order: int
     take_price: Decimal
     take_in_percent: Decimal
     stop_price: Decimal
@@ -68,9 +68,8 @@ class Position:
     start_balance: Decimal
 
     # Что-то про время
-    time_frame: Decimal
     time_to_cancel: Decimal
-    open_time: Decimal
-    update_time: Decimal
-    close_time: Decimal
+    open_time: int
+    update_time: int
+    close_time: int
 

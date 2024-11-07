@@ -17,5 +17,5 @@ class OpenPositionBody(BaseModel):
     part_from_potential_profit: str
     max_count_trail_take: str
     limit_depth: str
-    time_to_set_stop: str
-    time_to_cancel_order: str
+    wait_time_to_set_stop: str
+    wait_time_to_cancel_order: str

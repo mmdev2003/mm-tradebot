@@ -35,10 +35,10 @@ def open_position_handler(
         limit_depth = Decimal(order_data['limit_depth'])
 
         # Закрытие лимитки, которая долго не исполняется
-        time_to_cancel_order = order_data['time_to_cancel_order']
+        wait_time_to_cancel_order = order_data['wait_time_to_cancel_order']
 
         # Отложенный стоп лосс
-        time_to_set_stop = order_data['time_to_set_stop']
+        wait_time_to_set_stop = order_data['wait_time_to_set_stop']
 
         with lock:
             account = account_service.get_account()
@@ -74,6 +74,6 @@ def open_position_handler(
                     step_move_stop_in_percent=step_move_stop_in_percent,
                     part_from_potential_profit=part_from_potential_profit,
                     max_count_trail_take=max_count_trail_take,
-                    time_to_cancel_order=time_to_cancel_order,
-                    time_to_set_stop=time_to_set_stop,
+                    wait_time_to_cancel_order=wait_time_to_cancel_order,
+                    wait_time_to_set_stop=wait_time_to_set_stop,
                 )

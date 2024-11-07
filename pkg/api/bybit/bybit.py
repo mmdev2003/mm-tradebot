@@ -25,6 +25,9 @@ class BybitClient(model.IMarketClient):
         )['result']['list'][0]['lastPrice']
         return Decimal(last_price).normalize()
 
+    def cancel_all_orders(self, symbol: str) -> Decimal:
+        return self.client.cancel_all_orders(category='linear', symbol=symbol)
+
     def get_open_orders(self, symbol: str):
         open_orders = self.client.get_open_orders(
             category='linear',
@@ -55,8 +58,7 @@ class BybitClient(model.IMarketClient):
         qty_step = symbol_info['result']['list'][0]['lotSizeFilter']['qtyStep']
         return Decimal(qty_step)
 
-    def cancel_all_orders(self, symbol: str) -> Decimal:
-        return self.client.cancel_all_orders(category='linear', symbol=symbol)
+
 
     def set_leverage(self, symbol: str, leverage: int):
         current_leverage = self.get_position(symbol)['leverage']

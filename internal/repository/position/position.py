@@ -24,8 +24,8 @@ class PositionRepository(model.IPositionRepository):
             step_move_stop_in_percent: str,
             part_from_potential_profit: str,
             max_count_trail_take: str,
-            time_to_set_stop: str,
-            time_to_cancel_order: str,
+            wait_time_to_set_stop: str,
+            wait_time_to_cancel_order: str,
             limit_order_size: str,
             open_time: int,
             update_time: int
@@ -43,8 +43,8 @@ class PositionRepository(model.IPositionRepository):
             'step_move_stop_in_percent': step_move_stop_in_percent,
             'part_from_potential_profit': part_from_potential_profit,
             'max_count_trail_take': max_count_trail_take,
-            'time_to_set_stop': time_to_set_stop,
-            'time_to_cancel_order': time_to_cancel_order,
+            'wait_time_to_set_stop': wait_time_to_set_stop,
+            'wait_time_to_cancel_order': wait_time_to_cancel_order,
             'limit_order_size': limit_order_size,
             'open_time': open_time,
             'update_time': update_time
@@ -60,3 +60,17 @@ class PositionRepository(model.IPositionRepository):
         position = self.in_memory_kv_db.get(symbol)
         position = orjson.loads(position)
         return model.Position(**position)
+
+    def delete_position(self, symbol: str):
+        self.in_memory_kv_db.delete(symbol)
+
+    def get_all_position(self) -> list[model.Position]:
+        positions = []
+
+        keys = self.in_memory_kv_db.all_keys()
+        for key in keys:
+            position = self.in_memory_kv_db.get(key)
+            position = orjson.loads(position)
+            positions.append(model.Position(**position))
+
+        return positions

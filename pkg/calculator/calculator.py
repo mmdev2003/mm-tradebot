@@ -68,10 +68,7 @@ class Calculator:
         return purchased_price.quantize(tick_size, rounding=ROUND_HALF_EVEN), purchased_size.quantize(qty_step,
                                                                                                       rounding=ROUND_HALF_EVEN)
 
-    def get_time_to_cancel(self, time_frame: int, open_time: float, wait_time: int):
-        open_time = datetime.fromtimestamp(open_time)
-        time_to_cancel = open_time + timedelta(seconds=wait_time)
-        return time_to_cancel.timestamp()
+
 
     def get_time_to_set_stop(self, update_time, time_to_set_stop):
         update_time = datetime.fromtimestamp(update_time)

@@ -1,8 +1,10 @@
 import redis.commands.json
 from redis import Redis
 
+from internal import model
 
-class _Redis:
+
+class _Redis(model.IInMemoryKvDB):
     def __init__(self, host: str, port: int, db: int):
         self.host = host
         self.port = port
@@ -23,3 +25,6 @@ class _Redis:
 
     def delete(self, key: str):
         self.redis.delete(key)
+
+    def all_keys(self) -> list:
+        return self.redis.keys()
