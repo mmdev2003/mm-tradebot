@@ -1,0 +1,17 @@
+package model
+
+type Status string
+
+const (
+	Limit         Status = "limit"
+	Active        Status = "active"
+	ActiveLimited Status = "activeLimit"
+	Closed        Status = "closed"
+)
+
+type Side string
+
+const (
+	BUY  Side = "BUY"
+	SELL Side = "SELL"
+)
