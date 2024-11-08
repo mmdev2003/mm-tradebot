@@ -17,12 +17,13 @@ type Account struct {
 }
 
 type LimitOrder struct {
-	Size      decimal.Decimal
-	Price     decimal.Decimal
-	CreatedAt time.Time
+	Size     decimal.Decimal
+	Price    decimal.Decimal
+	OpenTime time.Time
 }
 
 type Position struct {
+	Symbol     string
 	Status     Status
 	Side       Side
 	LimitOrder *LimitOrder

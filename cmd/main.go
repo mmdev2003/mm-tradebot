@@ -1,6 +1,7 @@
 package main
 
 import (
+	CancelOrder "mm-tradebot/internal/app/cancel-order"
 	"mm-tradebot/internal/config"
 	"mm-tradebot/internal/model"
 	"sync"
@@ -47,8 +48,6 @@ func main() {
 	)
 
 	mu := sync.Mutex{}
-	wg := sync.WaitGroup{}
-
 	go func() {
 		OpenPosition.Start(
 			&mu,
@@ -58,5 +57,11 @@ func main() {
 		)
 	}()
 
-	wg.Wait()
+	go func() {
+		CancelOrder.Start(
+			&mu,
+			cfg,
+			positionService,
+		)
+	}()
 }

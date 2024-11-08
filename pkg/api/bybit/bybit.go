@@ -3,6 +3,7 @@ package bybit
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/shopspring/decimal"
 	Bybit "github.com/wuhewuhe/bybit.go.api"
 	"mm-tradebot/internal/model/api"
@@ -23,13 +24,14 @@ type ClientBybit struct {
 
 func (c *ClientBybit) Balance() decimal.Decimal {
 	params := map[string]any{
-		"accountType": "CONTRACT",
+		"accountType": "UNIFIED",
 		"coin":        "USDT",
 	}
 	wallet, err := c.httpClient.NewUtaBybitServiceWithParams(params).GetAccountWallet(context.Background())
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(Bybit.PrettyPrint(wallet))
 
 	rawBytes, err := json.Marshal(wallet)
 	if err != nil {
@@ -112,6 +114,6 @@ func (c *ClientBybit) CancelAllOrder(symbol string) error {
 	if err != nil {
 		return err
 	}
-	Bybit.PrettyPrint(response)
+	fmt.Println(Bybit.PrettyPrint(response))
 	return nil
 }

@@ -11,7 +11,7 @@ func New() *RepositoryPosition {
 }
 
 type RepositoryPosition struct {
-	positions map[string]*model.Position
+	position *model.Position
 }
 
 func (positionRepo *RepositoryPosition) OpenLimitOrder(
@@ -21,26 +21,38 @@ func (positionRepo *RepositoryPosition) OpenLimitOrder(
 	size decimal.Decimal,
 	limitOrderPrice decimal.Decimal,
 ) {
-	positionRepo.positions[symbol].LimitOrder = &model.LimitOrder{
-		Size:      size,
-		Price:     limitOrderPrice,
-		CreatedAt: time.Now(),
+	timeNow := time.Now()
+	positionRepo.position.LimitOrder = &model.LimitOrder{
+		Size:     size,
+		Price:    limitOrderPrice,
+		OpenTime: timeNow,
 	}
-	positionRepo.positions[symbol].Side = side
-	positionRepo.positions[symbol].Status = status
+	positionRepo.position.Side = side
+	positionRepo.position.Status = status
+	positionRepo.position.Symbol = symbol
+	positionRepo.position.OpenTime = timeNow
 }
 
 func (positionRepo *RepositoryPosition) ReopenLimitOrder(
-	symbol string,
 	status model.Status,
 	size decimal.Decimal,
 	price decimal.Decimal,
 ) {
-	positionRepo.positions[symbol].LimitOrder.Price = price
-	positionRepo.positions[symbol].LimitOrder.Size = size
-	positionRepo.positions[symbol].Status = status
+	positionRepo.position.LimitOrder.Price = price
+	positionRepo.position.LimitOrder.Size = size
+	positionRepo.position.Status = status
 }
 
-func (positionRepo *RepositoryPosition) Position(symbol string) *model.Position {
-	return positionRepo.positions[symbol]
+func (positionRepo *RepositoryPosition) CancelLimitOrder() {
+	if positionRepo.position.Status == model.Limit {
+		positionRepo.position = &model.Position{}
+	}
+
+	if positionRepo.position.Status == model.ActiveLimit {
+		positionRepo.position.Status = model.Active
+	}
+}
+
+func (positionRepo *RepositoryPosition) Position() *model.Position {
+	return positionRepo.position
 }

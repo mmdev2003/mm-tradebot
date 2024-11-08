@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/shopspring/decimal"
 	"mm-tradebot/internal/model/api"
+	"time"
 )
 
 type IAccountService interface {
@@ -14,14 +15,17 @@ type IAccountRepository interface {
 
 type IPositionService interface {
 	OpenLimitOrder(symbol string, side Side, status Status, size decimal.Decimal, limitDepth decimal.Decimal) error
-	Position(symbol string) *Position
+	CancelLimitOrder(symbol string) error
+	Position() *Position
 	CalcLimitOrderPrice(symbol string, side Side, limitDepth decimal.Decimal) (decimal.Decimal, error)
+	CalcCancelTime(openTime time.Time, secondsToCancelLimitOrder int) time.Time
 }
 
 type IPositionRepository interface {
 	OpenLimitOrder(symbol string, side Side, status Status, size decimal.Decimal, limitOrderPrice decimal.Decimal)
-	ReopenLimitOrder(symbol string, status Status, size decimal.Decimal, price decimal.Decimal)
-	Position(symbol string) *Position
+	CancelLimitOrder()
+	ReopenLimitOrder(status Status, size decimal.Decimal, price decimal.Decimal)
+	Position() *Position
 }
 
 type IBybitClient interface {
