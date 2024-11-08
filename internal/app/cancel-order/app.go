@@ -16,6 +16,11 @@ func Start(
 	for {
 		mu.Lock()
 		position := positionService.Position()
+		if position == nil {
+			mu.Unlock()
+			time.Sleep(20 * time.Second)
+			continue
+		}
 		status := position.Status
 
 		if status == model.Limit || status == model.ActiveLimit {

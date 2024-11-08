@@ -1,7 +1,6 @@
 package main
 
 import (
-	CancelOrder "mm-tradebot/internal/app/cancel-order"
 	"mm-tradebot/internal/config"
 	"mm-tradebot/internal/model"
 	"sync"
@@ -22,6 +21,7 @@ import (
 )
 
 import (
+	CancelOrder "mm-tradebot/internal/app/cancel-order"
 	OpenPosition "mm-tradebot/internal/app/open-position"
 )
 
@@ -57,11 +57,9 @@ func main() {
 		)
 	}()
 
-	go func() {
-		CancelOrder.Start(
-			&mu,
-			cfg,
-			positionService,
-		)
-	}()
+	CancelOrder.Start(
+		&mu,
+		cfg,
+		positionService,
+	)
 }

@@ -42,7 +42,7 @@ func Control(
 			return request.JSON(200, "Максимальная просадка, давай думать")
 		}
 
-		positionDB := positionService.Position(body.Symbol)
+		positionDB := positionService.Position()
 
 		if positionDB.Status == "" {
 			err := positionService.OpenLimitOrder(
