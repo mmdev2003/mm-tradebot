@@ -36,9 +36,7 @@ class Calculator:
             tick_size: int,
     ):
         if position_side == 'Buy':
-            take_price = (open_price * size + open_commission_in_dollars) / size * (
-                    Decimal('1') + (take_in_percent / Decimal('100'))) * (
-                                 Decimal('1') + (self.taker / Decimal('100')))
+            take_price = (open_price * size + open_commission_in_dollars) / size * (Decimal('1') + (take_in_percent / Decimal('100'))) * (Decimal('1') + (self.taker / Decimal('100')))
 
         else:
             take_price = (open_price * size - open_commission_in_dollars) / size * (

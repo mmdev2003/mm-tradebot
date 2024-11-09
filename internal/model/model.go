@@ -28,8 +28,13 @@ type Position struct {
 	Side       Side
 	LimitOrder *LimitOrder
 	Size       decimal.Decimal
-	AvgPrice   decimal.Decimal
 	Leverage   decimal.Decimal
+
+	OpenPrice decimal.Decimal
+	AvgPrice  decimal.Decimal
+
+	TakeInPercent decimal.Decimal
+	StopInPercent decimal.Decimal
 
 	OpenTime   time.Time
 	UpdateTime time.Time

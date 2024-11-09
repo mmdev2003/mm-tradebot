@@ -84,8 +84,8 @@ def get_db_data(position, account):
     return balance, start_balance, take_price_db, stop_price_db, take_in_percent, stop_in_percent, open_price_db, size_db, position_side, leverage
 
 
-def position_opened(client, position, account, symbol, balance, start_balance, open_price, open_price_db,
-                    take_in_percent, stop_in_percent, position_side, size, leverage, position_sum):
+def position_opened(symbol, , open_price, open_price_db,
+                    take_in_percent, stop_in_percent, position_side, size, leverage):
 
     if open_price != open_price_db:
         open_commission_in_percent = config.taker

@@ -17,10 +17,8 @@ func Control(
 
 ) echo.HandlerFunc {
 	type OpenPositionBody struct {
-		Symbol     string          `json:"Symbol"`
-		Side       model.Side      `json:"Side"`
-		Size       decimal.Decimal `json:"Size"`
-		LimitDepth decimal.Decimal `json:"LimitDepth"`
+		Symbol string     `json:"Symbol"`
+		Side   model.Side `json:"Side"`
 	}
 	return func(request echo.Context) error {
 		mu.Lock()
@@ -49,8 +47,8 @@ func Control(
 				body.Symbol,
 				body.Side,
 				model.Limit,
-				body.Size,
-				body.LimitDepth,
+				cfg.Size,
+				cfg.LimitDepth,
 			)
 			if err != nil {
 				slog.Error(err.Error())

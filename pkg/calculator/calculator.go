@@ -32,3 +32,33 @@ func (c *TradeCalculator) CalcLimitOrderPrice(
 	}
 	return limitPrice
 }
+
+func (c *TradeCalculator) CalcCommission(
+	commissionInPercent, price, size decimal.Decimal,
+) decimal.Decimal {
+	commissionInDollar := price.Mul(size.Mul(commissionInPercent.Div(decimal.NewFromInt(100))))
+	return commissionInDollar
+}
+
+func (c *TradeCalculator) CalcTakePrice(
+	price decimal.Decimal,
+	side model.Side,
+	size decimal.Decimal,
+	commissionInDollar decimal.Decimal,
+	commissionInPercent decimal.Decimal,
+	takeInPercent decimal.Decimal,
+) decimal.Decimal {
+	var takePrice decimal.Decimal
+	if side == model.BUY {
+		positionSum := commissionInDollar.Add(price.Mul(size))
+		takeInPart := decimal.NewFromInt(1).Add(takeInPercent.Div(decimal.NewFromInt(100)))
+		commissionInPart := decimal.NewFromInt(1).Add(commissionInPercent.Div(decimal.NewFromInt(100)))
+		takePrice = commissionInPart.Mul(takeInPart.Mul(positionSum.Div(size)))
+	} else {
+		positionSum := commissionInDollar.Sub(price.Mul(size))
+		takeInPart := decimal.NewFromInt(1).Sub(takeInPercent.Div(decimal.NewFromInt(100)))
+		commissionInPart := decimal.NewFromInt(1).Sub(commissionInPercent.Div(decimal.NewFromInt(100)))
+		takePrice = commissionInPart.Mul(takeInPart.Mul(positionSum.Div(size)))
+	}
+	return takePrice
+}

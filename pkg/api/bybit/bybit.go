@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/shopspring/decimal"
 	Bybit "github.com/wuhewuhe/bybit.go.api"
+	"mm-tradebot/internal/model"
 	"mm-tradebot/internal/model/api"
 )
 
@@ -114,6 +115,67 @@ func (c *ClientBybit) CancelAllOrder(symbol string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(Bybit.PrettyPrint(response))
+	return nil
+}
+
+func (c *ClientBybit) SetTakeProfit(
+	symbol string,
+	takePrice decimal.Decimal,
+) error {
+	params := map[string]any{
+		"symbol":     symbol,
+		"category":   "linear",
+		"takeProfit": takePrice.String(),
+	}
+	response, err := c.httpClient.NewUtaBybitServiceWithParams(params).SetPositionTradingStop(context.Background())
+	if err != nil {
+		return err
+	}
+	fmt.Println(Bybit.PrettyPrint(response))
+	return nil
+}
+
+func (c *ClientBybit) SetLeverage(
+	symbol string,
+	leverage decimal.Decimal,
+) error {
+	params := map[string]any{
+		"symbol":       symbol,
+		"category":     "linear",
+		"buyLeverage":  leverage.String(),
+		"sellLeverage": leverage.String(),
+	}
+	response, err := c.httpClient.NewUtaBybitServiceWithParams(params).SetPositionLeverage(context.Background())
+	if err != nil {
+		return err
+	}
+	fmt.Println(Bybit.PrettyPrint(response))
+	return nil
+}
+
+func (c *ClientBybit) OpenLimitOrder(
+	symbol string,
+	side model.Side,
+	price decimal.Decimal,
+	size decimal.Decimal,
+	leverage decimal.Decimal,
+) error {
+	_ = c.SetLeverage(symbol, leverage)
+
+	params := map[string]any{
+		"symbol":    symbol,
+		"category":  "linear",
+		"orderType": "Limit",
+		"side":      side,
+		"price":     price.String(),
+		"qty":       size.String(),
+	}
+	response, err := c.httpClient.NewUtaBybitServiceWithParams(params).PlaceOrder(context.Background())
+	if err != nil {
+		return err
+	}
+
 	fmt.Println(Bybit.PrettyPrint(response))
 	return nil
 }

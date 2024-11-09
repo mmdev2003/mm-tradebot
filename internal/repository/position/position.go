@@ -30,7 +30,17 @@ func (positionRepo *RepositoryPosition) OpenLimitOrder(
 	positionRepo.position.Side = side
 	positionRepo.position.Status = status
 	positionRepo.position.Symbol = symbol
-	positionRepo.position.OpenTime = timeNow
+}
+
+func (positionRepo *RepositoryPosition) OpenPosition(
+	openPrice decimal.Decimal,
+) {
+	positionRepo.position.OpenTime = time.Now()
+	positionRepo.position.OpenPrice = openPrice
+	positionRepo.position.AvgPrice = openPrice
+	positionRepo.position.Size = positionRepo.position.LimitOrder.Size
+
+	positionRepo.position.LimitOrder = &model.LimitOrder{}
 }
 
 func (positionRepo *RepositoryPosition) ReopenLimitOrder(
