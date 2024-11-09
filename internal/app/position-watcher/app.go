@@ -46,13 +46,13 @@ func PositionHandler(
 		if err != nil {
 			return err
 		}
-		positionActual := Message.Data[0]
 
 		positionDB := positionService.Position()
 		if positionDB == nil {
 			return nil
 		}
 
+		positionActual := Message.Data[0]
 		openPriceActual, err := decimal.NewFromString(positionActual.EntryPrice)
 		if err != nil {
 			return err

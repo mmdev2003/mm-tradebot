@@ -21,8 +21,8 @@ func Start(
 			time.Sleep(20 * time.Second)
 			continue
 		}
-		status := position.Status
 
+		status := position.Status
 		if status == model.Limit || status == model.ActiveLimit {
 			cancelTime := position.LimitOrder.OpenTime.Add(time.Duration(cfg.SecondsToCancelLimitOrder) * time.Second)
 

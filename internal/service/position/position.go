@@ -141,6 +141,7 @@ func (positionService *ServicePosition) CancelLimitOrder(
 	if err != nil {
 		return err
 	}
+
 	positionService.positionRepo.CancelLimitOrder()
 	return nil
 }
@@ -177,7 +178,6 @@ func (positionService *ServicePosition) calcLimitOrderPrice(
 		limitDepth,
 		side,
 	)
-
 	return limitOrderPrice, nil
 }
 
@@ -189,7 +189,6 @@ func (positionService *ServicePosition) setTakeProfit(
 	commissionInDollar decimal.Decimal,
 	takeInPercent decimal.Decimal,
 ) error {
-
 	takePrice := positionService.tradeCalculator.CalcTakePrice(
 		price,
 		side,
@@ -197,6 +196,7 @@ func (positionService *ServicePosition) setTakeProfit(
 		commissionInDollar,
 		takeInPercent,
 	)
+
 	err := positionService.bybitClient.SetTakeProfit(
 		symbol,
 		takePrice,
@@ -204,5 +204,6 @@ func (positionService *ServicePosition) setTakeProfit(
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

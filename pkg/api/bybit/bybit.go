@@ -116,6 +116,7 @@ func (c *ClientBybit) CancelAllOrder(symbol string) error {
 		return err
 	}
 	fmt.Println(Bybit.PrettyPrint(response))
+
 	return nil
 }
 
@@ -133,6 +134,7 @@ func (c *ClientBybit) SetTakeProfit(
 		return err
 	}
 	fmt.Println(Bybit.PrettyPrint(response))
+
 	return nil
 }
 
@@ -149,6 +151,7 @@ func (c *ClientBybit) SetStopLoss(
 	if err != nil {
 		return err
 	}
+
 	fmt.Println(Bybit.PrettyPrint(response))
 	return nil
 }
@@ -167,6 +170,7 @@ func (c *ClientBybit) SetLeverage(
 	if err != nil {
 		return err
 	}
+
 	fmt.Println(Bybit.PrettyPrint(response))
 	return nil
 }

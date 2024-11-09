@@ -27,6 +27,7 @@ func Control(
 			slog.Error(err.Error())
 			return request.JSON(422, err)
 		}
+
 		if err := request.Validate(&body); err != nil {
 			slog.Error(err.Error())
 			return request.JSON(422, err)
