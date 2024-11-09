@@ -4,7 +4,6 @@ import (
 	"github.com/shopspring/decimal"
 	"mm-tradebot/internal/config"
 	"mm-tradebot/internal/model"
-	"time"
 )
 
 func New(
@@ -28,69 +27,6 @@ type ServicePosition struct {
 	cfg             *config.Config
 }
 
-func (positionService *ServicePosition) OpenPosition(
-	symbol string,
-	side model.Side,
-	openPriceActual decimal.Decimal,
-	openPriceDB decimal.Decimal,
-	size decimal.Decimal,
-	takeInPercent decimal.Decimal,
-) error {
-	var commissionInPercent decimal.Decimal
-	if openPriceActual.Equal(openPriceDB) {
-		commissionInPercent = positionService.cfg.Maker
-	} else {
-		commissionInPercent = positionService.cfg.Taker
-	}
-
-	err := positionService.SetTakeProfit(
-		symbol,
-		side,
-		openPriceActual,
-		size,
-		commissionInPercent,
-		takeInPercent,
-	)
-	if err != nil {
-		return err
-	}
-
-	positionService.positionRepo.OpenPosition(openPriceActual)
-	return nil
-
-}
-
-func (positionService *ServicePosition) SetTakeProfit(
-	symbol string,
-	side model.Side,
-	price decimal.Decimal,
-	size decimal.Decimal,
-	commissionInPercent decimal.Decimal,
-	takeInPercent decimal.Decimal,
-) error {
-	commissionInDollar := positionService.tradeCalculator.CalcCommission(
-		commissionInPercent,
-		price,
-		size,
-	)
-	takePrice := positionService.tradeCalculator.CalcTakePrice(
-		price,
-		side,
-		size,
-		commissionInDollar,
-		commissionInPercent,
-		takeInPercent,
-	)
-	err := positionService.bybitClient.SetTakeProfit(
-		symbol,
-		takePrice,
-	)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (positionService *ServicePosition) OpenLimitOrder(
 	symbol string,
 	side model.Side,
@@ -99,7 +35,7 @@ func (positionService *ServicePosition) OpenLimitOrder(
 	limitDepth decimal.Decimal,
 	leverage decimal.Decimal,
 ) error {
-	limitOrderPrice, err := positionService.CalcLimitOrderPrice(
+	limitOrderPrice, err := positionService.calcLimitOrderPrice(
 		symbol,
 		side,
 		limitDepth,
@@ -129,6 +65,75 @@ func (positionService *ServicePosition) OpenLimitOrder(
 	return nil
 }
 
+func (positionService *ServicePosition) OpenPosition(
+	symbol string,
+	side model.Side,
+	openPriceActual decimal.Decimal,
+	openPriceDB decimal.Decimal,
+	size decimal.Decimal,
+	takeInPercent decimal.Decimal,
+) error {
+	var commissionInPercent decimal.Decimal
+	if openPriceActual.Equal(openPriceDB) {
+		commissionInPercent = positionService.cfg.Maker
+	} else {
+		commissionInPercent = positionService.cfg.Taker
+	}
+
+	openCommissionInDollar := positionService.tradeCalculator.CalcCommission(
+		commissionInPercent,
+		openPriceActual,
+		size,
+	)
+	closeCommissionInDollar := positionService.tradeCalculator.CalcCommission(
+		positionService.cfg.Taker,
+		openPriceActual,
+		size,
+	)
+	commissionInDollar := openCommissionInDollar.Add(closeCommissionInDollar)
+
+	err := positionService.setTakeProfit(
+		symbol,
+		side,
+		openPriceActual,
+		size,
+		commissionInDollar,
+		takeInPercent,
+	)
+	if err != nil {
+		return err
+	}
+
+	positionService.positionRepo.OpenPosition(openPriceActual, commissionInDollar)
+	return nil
+}
+
+func (positionService *ServicePosition) SetStop(
+	symbol string,
+	price decimal.Decimal,
+	size decimal.Decimal,
+	side model.Side,
+	commissionInDollar decimal.Decimal,
+	stopInPercent decimal.Decimal,
+) error {
+	stopPrice := positionService.tradeCalculator.CalcStopPrice(
+		price,
+		side,
+		size,
+		commissionInDollar,
+		stopInPercent,
+	)
+
+	err := positionService.bybitClient.SetStopLoss(
+		symbol,
+		stopPrice,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (positionService *ServicePosition) CancelLimitOrder(
 	symbol string,
 ) error {
@@ -140,7 +145,24 @@ func (positionService *ServicePosition) CancelLimitOrder(
 	return nil
 }
 
-func (positionService *ServicePosition) CalcLimitOrderPrice(
+func (positionService *ServicePosition) Position() *model.Position {
+	position := positionService.positionRepo.Position()
+	return position
+}
+
+func (positionService *ServicePosition) ClosePosition(
+	symbol string,
+) error {
+	err := positionService.bybitClient.CancelAllOrder(symbol)
+	if err != nil {
+		return err
+	}
+
+	positionService.positionRepo.ClosePosition()
+	return nil
+}
+
+func (positionService *ServicePosition) calcLimitOrderPrice(
 	symbol string,
 	side model.Side,
 	limitDepth decimal.Decimal,
@@ -159,15 +181,28 @@ func (positionService *ServicePosition) CalcLimitOrderPrice(
 	return limitOrderPrice, nil
 }
 
-func (positionService *ServicePosition) CalcCancelTime(
-	openTime time.Time,
-	secondsToCancelLimitOrder int,
-) time.Time {
-	cancelTime := openTime.Add(time.Duration(secondsToCancelLimitOrder) * time.Second)
-	return cancelTime
-}
+func (positionService *ServicePosition) setTakeProfit(
+	symbol string,
+	side model.Side,
+	price decimal.Decimal,
+	size decimal.Decimal,
+	commissionInDollar decimal.Decimal,
+	takeInPercent decimal.Decimal,
+) error {
 
-func (positionService *ServicePosition) Position() *model.Position {
-	position := positionService.positionRepo.Position()
-	return position
+	takePrice := positionService.tradeCalculator.CalcTakePrice(
+		price,
+		side,
+		size,
+		commissionInDollar,
+		takeInPercent,
+	)
+	err := positionService.bybitClient.SetTakeProfit(
+		symbol,
+		takePrice,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }

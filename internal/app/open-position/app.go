@@ -16,10 +16,9 @@ var PREFIX = "/api/position"
 func Start(
 	mu *sync.Mutex,
 	cfg *config.Config,
-	accountService model.IAccountService,
 	positionService model.IPositionService,
 ) {
 	server := echo.New()
-	server.POST(PREFIX+"/control", Control(mu, cfg, accountService, positionService))
+	server.POST(PREFIX+"/control", Control(mu, cfg, positionService))
 	server.Logger.Fatal(server.Start(":8001"))
 }

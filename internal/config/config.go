@@ -10,9 +10,10 @@ func New() *Config {
 		ApiKey:    "ZBzJ4KOUSnS1kYAuF8",
 		ApiSecret: "JyWYCUhnX2XzA6wVTXYoHo5VsDAsMVz7cIc0",
 
-		TimeToCancelLimitOrder: 30,
-		Leverage:               decimal.NewFromInt(3),
-		MaxLoss:                decimal.NewFromInt(-1),
+		SecondsToCancelLimitOrder: 30,
+		SecondsToSetStop:          30,
+		Leverage:                  decimal.NewFromInt(3),
+		MaxLoss:                   decimal.NewFromInt(-1),
 	}
 }
 
@@ -23,11 +24,12 @@ type Config struct {
 	ApiKey    string
 	ApiSecret string
 
-	TimeToCancelLimitOrder int
-	Leverage               decimal.Decimal
-	MaxLoss                decimal.Decimal
-	Size                   decimal.Decimal
-	LimitDepth             decimal.Decimal
+	SecondsToCancelLimitOrder int
+	SecondsToSetStop          int
+	Leverage                  decimal.Decimal
+	MaxLoss                   decimal.Decimal
+	Size                      decimal.Decimal
+	LimitDepth                decimal.Decimal
 
 	TakeInPercent decimal.Decimal
 	StopInPercent decimal.Decimal

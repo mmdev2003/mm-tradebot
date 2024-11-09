@@ -136,6 +136,23 @@ func (c *ClientBybit) SetTakeProfit(
 	return nil
 }
 
+func (c *ClientBybit) SetStopLoss(
+	symbol string,
+	stopPrice decimal.Decimal,
+) error {
+	params := map[string]any{
+		"symbol":   symbol,
+		"category": "linear",
+		"stopLoss": stopPrice.String(),
+	}
+	response, err := c.httpClient.NewUtaBybitServiceWithParams(params).SetPositionTradingStop(context.Background())
+	if err != nil {
+		return err
+	}
+	fmt.Println(Bybit.PrettyPrint(response))
+	return nil
+}
+
 func (c *ClientBybit) SetLeverage(
 	symbol string,
 	leverage decimal.Decimal,

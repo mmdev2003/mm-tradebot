@@ -24,10 +24,8 @@ func Start(
 		status := position.Status
 
 		if status == model.Limit || status == model.ActiveLimit {
-			cancelTime := positionService.CalcCancelTime(
-				position.LimitOrder.OpenTime,
-				cfg.TimeToCancelLimitOrder,
-			)
+			cancelTime := position.LimitOrder.OpenTime.Add(time.Duration(cfg.SecondsToCancelLimitOrder) * time.Second)
+
 			if cancelTime.Before(time.Now()) {
 				err := positionService.CancelLimitOrder(position.Symbol)
 				if err != nil {

@@ -45,20 +45,45 @@ func (c *TradeCalculator) CalcTakePrice(
 	side model.Side,
 	size decimal.Decimal,
 	commissionInDollar decimal.Decimal,
-	commissionInPercent decimal.Decimal,
 	takeInPercent decimal.Decimal,
 ) decimal.Decimal {
 	var takePrice decimal.Decimal
 	if side == model.BUY {
-		positionSum := commissionInDollar.Add(price.Mul(size))
-		takeInPart := decimal.NewFromInt(1).Add(takeInPercent.Div(decimal.NewFromInt(100)))
-		commissionInPart := decimal.NewFromInt(1).Add(commissionInPercent.Div(decimal.NewFromInt(100)))
-		takePrice = commissionInPart.Mul(takeInPart.Mul(positionSum.Div(size)))
+		positionSum := price.Mul(size)
+		takeInPart := takeInPercent.Div(decimal.NewFromInt(100))
+		potentialProfitInDollar := positionSum.Mul(takeInPart)
+		neededPrice := positionSum.Add(potentialProfitInDollar.Add(commissionInDollar))
+		takePrice = neededPrice.Mul(size)
 	} else {
-		positionSum := commissionInDollar.Sub(price.Mul(size))
-		takeInPart := decimal.NewFromInt(1).Sub(takeInPercent.Div(decimal.NewFromInt(100)))
-		commissionInPart := decimal.NewFromInt(1).Sub(commissionInPercent.Div(decimal.NewFromInt(100)))
-		takePrice = commissionInPart.Mul(takeInPart.Mul(positionSum.Div(size)))
+		positionSum := price.Mul(size)
+		takeInPart := takeInPercent.Div(decimal.NewFromInt(100))
+		potentialProfitInDollar := positionSum.Mul(takeInPart)
+		neededPrice := positionSum.Sub(potentialProfitInDollar.Sub(commissionInDollar))
+		takePrice = neededPrice.Mul(size)
 	}
 	return takePrice
+}
+
+func (c *TradeCalculator) CalcStopPrice(
+	price decimal.Decimal,
+	side model.Side,
+	size decimal.Decimal,
+	commissionInDollar decimal.Decimal,
+	stopInPercent decimal.Decimal,
+) decimal.Decimal {
+	var stopPrice decimal.Decimal
+	if side == model.BUY {
+		positionSum := price.Mul(size)
+		stopInPart := stopInPercent.Div(decimal.NewFromInt(100))
+		potentialLossInDollar := positionSum.Mul(stopInPart)
+		neededPrice := positionSum.Sub(potentialLossInDollar.Sub(commissionInDollar))
+		stopPrice = neededPrice.Mul(size)
+	} else {
+		positionSum := price.Mul(size)
+		stopInPart := stopInPercent.Div(decimal.NewFromInt(100))
+		potentialLossInDollar := positionSum.Mul(stopInPart)
+		neededPrice := positionSum.Add(potentialLossInDollar.Add(commissionInDollar))
+		stopPrice = neededPrice.Mul(size)
+	}
+	return stopPrice
 }

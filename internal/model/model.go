@@ -5,17 +5,6 @@ import (
 	"time"
 )
 
-type Account struct {
-	Balance              decimal.Decimal
-	StartBalance         decimal.Decimal
-	TotalProfitInPercent decimal.Decimal
-	TotalProfitInDollars decimal.Decimal
-	CountProfitPositions int
-	CountLossPositions   int
-	CountActivePositions int
-	CountClosedPositions int
-}
-
 type LimitOrder struct {
 	Size     decimal.Decimal
 	Price    decimal.Decimal
@@ -36,7 +25,8 @@ type Position struct {
 	TakeInPercent decimal.Decimal
 	StopInPercent decimal.Decimal
 
-	OpenTime   time.Time
-	UpdateTime time.Time
-	CloseTime  time.Time
+	CommissionInDollar decimal.Decimal
+	OpenTime           time.Time
+	UpdateTime         time.Time
+	CloseTime          time.Time
 }

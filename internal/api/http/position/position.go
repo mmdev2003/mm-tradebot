@@ -2,7 +2,6 @@ package position
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/shopspring/decimal"
 	"log/slog"
 	"mm-tradebot/internal/config"
 	"mm-tradebot/internal/model"
@@ -12,7 +11,6 @@ import (
 func Control(
 	mu *sync.Mutex,
 	cfg *config.Config,
-	accountService model.IAccountService,
 	positionService model.IPositionService,
 
 ) echo.HandlerFunc {
@@ -34,11 +32,9 @@ func Control(
 			return request.JSON(422, err)
 		}
 
-		account := accountService.Account()
-
-		if greater := decimal.Max(account.TotalProfitInPercent, cfg.MaxLoss); greater == cfg.MaxLoss {
-			return request.JSON(200, "Максимальная просадка, давай думать")
-		}
+		//if greater := decimal.Max(account.TotalProfitInPercent, cfg.MaxLoss); greater == cfg.MaxLoss {
+		//	return request.JSON(200, "Максимальная просадка, давай думать")
+		//}
 
 		positionDB := positionService.Position()
 
@@ -49,6 +45,7 @@ func Control(
 				model.Limit,
 				cfg.Size,
 				cfg.LimitDepth,
+				cfg.Leverage,
 			)
 			if err != nil {
 				slog.Error(err.Error())
